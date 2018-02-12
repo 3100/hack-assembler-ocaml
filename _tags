@@ -1,0 +1,27 @@
+# OASIS_START
+# DO NOT EDIT (digest: 29f970078f59f355806934cca89d1dc3)
+# Ignore VCS directories, you can use the same kind of rule outside
+# OASIS_START/STOP if you want to exclude directories that contains
+# useless stuff for the build process
+true: annot, bin_annot
+<**/.svn>: -traverse
+<**/.svn>: not_hygienic
+".bzr": -traverse
+".bzr": not_hygienic
+".hg": -traverse
+".hg": not_hygienic
+".git": -traverse
+".git": not_hygienic
+"_darcs": -traverse
+"_darcs": not_hygienic
+# Library main
+"src/main.cmxs": use_main
+<src/*.ml{,i,y}>: pkg_str
+# Executable test_all
+<test/test.{native,byte}>: pkg_oUnit
+<test/test.{native,byte}>: pkg_str
+<test/test.{native,byte}>: use_main
+<test/*.ml{,i,y}>: pkg_oUnit
+<test/*.ml{,i,y}>: pkg_str
+<test/*.ml{,i,y}>: use_main
+# OASIS_STOP

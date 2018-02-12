@@ -11,8 +11,23 @@ OASISFormat: 0.4
 BuildTools: ocamlbuild
 Plugins: META (0.4), DevFiles (0.4)
 
-Executable "foo"
+
+Library "main"
   Path: src
-  MainIs: parser.ml
+  Modules: Main
   BuildDepends:
     str
+
+Executable "test_all"
+  Path: test
+  MainIs: test.ml
+  Build$: flag(tests)
+  CompiledObject: best
+  Install: false
+  BuildDepends: main, oUnit
+
+Test "test_all"
+  Run$: flag(tests)
+  TestTools: test_all
+  Command: $test_all
+  WorkingDirectory: test

@@ -29,3 +29,6 @@ let command_type line =
 
 let advance lines =
   Stream.next lines;;
+
+let say_hello msg = 
+  msg;;
