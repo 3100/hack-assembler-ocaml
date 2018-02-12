@@ -20,8 +20,10 @@ let has_more_commands lines =
 
 let command_type line =
   let trimmed_line = String.trim line and 
-    (* HACK: too dificult for my future self to understand *)
-    is_c_command = Str.regexp "^\\([AMD]+=\\)?[AMD-01!|&]+\\(;J[\\(GT|EQ|GE|LT|NE|LE|MP\\)]\\)?" and 
+    (* HACK: too dificult for my future self to understand. Also this does not work. *)
+    (* is_c_command = Str.regexp "^\\([AMD]+=\\)?[\\+AMD01!|&-]+\\(;J[\\(GT|EQ|GE|LT|NE|LE|MP\\)]\\)?" and *)
+    (* HACK: not complete pattern. *)
+    is_c_command = Str.regexp "^\\([AMD]+=\\)?[^()]+\\(;J.+\\)?$" and 
     is_l_command = Str.regexp "^([a-zA-Z0-9]+)$" in 
     if String.get trimmed_line 0 == '@' then A_Command
     else if Str.string_match is_c_command trimmed_line 0 then C_Command

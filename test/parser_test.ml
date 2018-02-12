@@ -1,20 +1,21 @@
 open OUnit2
 
+let assert_command str expected test_ctxt =
+  assert_equal (Parser.command_type str) expected
+
 let command_type_test =
-  "detect A command" >:: (fun _ -> 
-    assert_equal (Parser.command_type "@123") A_Command)
-
-(* TODO remove tests below *)
-let say_test =
-  "echo string" >:: (fun _ -> assert_equal (Parser.say_hello "hello") "hello")
-
-let simple_check_123_test =
-  "contains 123" >:: (fun _ ->
-    assert_equal (Parser.simple_check_123 "012345") true)
-
-let a_command_test =
-  "a command" >:: (fun _ ->
-    assert_equal (Parser.a_command ()) A_Command)
+  "command type" >::: [
+    "' @1' is A command" >:: assert_command " @1" A_Command;
+    "'@123' is A command" >:: assert_command "@123" A_Command;
+    "' M = D + 1' is C command" >:: assert_command " M = D + 1" C_Command;
+    "'D + 1; JGT' is C Command" >:: assert_command "D + 1; JGT" C_Command;
+    "'0;JMP' is C Command" >:: assert_command "0;JMP" C_Command;
+    "'0; JMP' is C Command" >:: assert_command "0; JMP" C_Command;
+    "'(Loop)' is L Command" >:: assert_command "(Loop)" L_Command;
+    "'(End)' is L Command" >:: assert_command "(End)" L_Command;
+  ]
 
 let tests =
-  "all_tests" >::: [ a_command_test; command_type_test; say_test; simple_check_123_test; ]
+  "all_tests" >::: [
+    command_type_test;
+  ]
