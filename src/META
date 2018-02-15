@@ -1,0 +1,12 @@
+# OASIS_START
+# DO NOT EDIT (digest: 69154dff2fe7b07b9545b9b66d694074)
+version = "0.1"
+description = "Hack assembler written in OCaml"
+requires = "str"
+archive(byte) = "main.cma"
+archive(byte, plugin) = "main.cma"
+archive(native) = "main.cmxa"
+archive(native, plugin) = "main.cmxs"
+exists_if = "main.cma"
+# OASIS_STOP
+

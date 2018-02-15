@@ -1,0 +1,32 @@
+Name: hack-assembler-ocaml
+Version: 0.1
+Synopsis: Hack assembler written in OCaml
+Authors: 3100 <3100.dev@gmail.com>
+License: MIT
+
+Description: a Hack assembler for nand2tetris course.
+Homepage: https://github.com/3100/hack-assembler-ocaml 
+
+OASISFormat: 0.4
+BuildTools: ocamlbuild
+Plugins: META (0.4), DevFiles (0.4)
+
+Library "main"
+  Path: src
+  Modules: Main
+  BuildDepends:
+    str
+
+Executable "test_all"
+  Path: test
+  MainIs: test.ml
+  Build$: flag(tests)
+  CompiledObject: best
+  Install: false
+  BuildDepends: main, oUnit
+
+Test "test_all"
+  Run$: flag(tests)
+  TestTools: test_all
+  Command: $test_all
+  WorkingDirectory: test
