@@ -26,18 +26,18 @@ let dest_test =
   let assert_dest str expected test_ctxt =
     assert_equal (Parser.dest str) expected in
   "dest" >::: [
-    "0; JMP -> 0" >:: assert_dest "0; JMP" ""; (* In this case, dest is empty. *) 
+    "0; JMP -> ''" >:: assert_dest "0; JMP" ""; (* In this case, dest is empty. *) 
     "D = M - 1 -> D" >:: assert_dest "D = M - 1" "D";
-    "D - 1; JLE -> D - 1" >:: assert_dest "D - 1; JLE" "";
+    "D - 1; JLE -> ''" >:: assert_dest "D - 1; JLE" "";
   ]
 
 let comp_test =
-  let assert_dest str expected test_ctxt =
+  let assert_comp str expected test_ctxt =
     assert_equal (Parser.comp str) expected in
   "comp" >::: [
-    "0; JMP -> 0" >:: assert_dest "0; JMP" "0"; (* In this case, comp is not empty. *) 
-    "D = M - 1 -> D" >:: assert_dest "D = M - 1" "M-1";
-    "D - 1; JLE -> D - 1" >:: assert_dest "D - 1; JLE" "D-1";
+    "0; JMP -> 0" >:: assert_comp "0; JMP" "0"; (* In this case, comp is not empty. *) 
+    "D = M - 1 -> D" >:: assert_comp "D = M - 1" "M-1";
+    "D - 1; JLE -> D - 1" >:: assert_comp "D - 1; JLE" "D-1";
   ]
 
 let tests =

@@ -10,7 +10,10 @@ type command =
 let _is_c_command = Str.regexp "^\\([AMD]+=\\)?\\([^()]+\\)\\(;J.+\\)?$"
 let _is_l_command = Str.regexp "^([a-zA-Z0-9]+)$" 
 
-let _trim_line line = String.trim line
+(* replace all " " with "" *)
+let _trim_line line = 
+  let pattern = Str.regexp " " in
+  Str.global_replace pattern "" line
 
 let line_stream_of_channel channel = 
   Stream.from
@@ -45,7 +48,7 @@ let dest line =
   let trimmed = _trim_line line in 
   if String.contains trimmed '=' then
     let len = String.index trimmed  '=' in
-    String.sub trimmed 0 (len - 1)
+    String.sub trimmed 0 len
   else ""
 
 (* Assume that this is only called when command_type is C_Command *)
@@ -59,9 +62,18 @@ let jump line =
 
 (* Assume that this is only called when command_type is C_Command *)
 let comp line =
-  let si = String.length (dest line) and
-  trimmed = _trim_line line in
+  (* HACK too complicated..*)
+  let desti = String.length (dest line) in
+  (* think of '=' *)
+  let si = if desti == 0 then 0 else desti + 1 in 
+  let trimmed = _trim_line line in
   let l = String.length trimmed and 
   jumplen = String.length (jump line) in
-  let len = l - jumplen - 1 - si in
-  String.sub trimmed si len 
+  (* think of ';' *)
+  let jl = if jumplen == 0 then 0 else jumplen + 2 in 
+  let len = l - jl - si in
+  (
+    Printf.printf "\ntrimmed: %s\n" trimmed;
+    Printf.printf "\nprintf: %s\n" (String.sub trimmed si len);
+    String.sub trimmed si len 
+  )
