@@ -12,8 +12,10 @@ let _is_l_command = Str.regexp "^([a-zA-Z0-9]+)$"
 
 (* replace all " " with "" *)
 let _trim_line line = 
+  let comment_pattern = Str.regexp "//.*$" in
+  let no_comment_line = (Str.replace_first comment_pattern "" line) in
   let pattern = Str.regexp " " in
-  Str.global_replace pattern "" line
+  Str.global_replace pattern "" no_comment_line 
 
 let line_stream_of_channel channel = 
   Stream.from
@@ -30,7 +32,8 @@ let advance lines =
 
 let command_type line =
   let trimmed = _trim_line line in 
-  if String.get trimmed 0 == '@' then A_Command
+  if String.length trimmed == 0 then Nothing
+  else if String.get trimmed 0 == '@' then A_Command
   else if Str.string_match _is_c_command trimmed 0 then C_Command
   else if Str.string_match _is_l_command trimmed 0 then L_Command
   else Nothing
@@ -72,8 +75,4 @@ let comp line =
   (* think of ';' *)
   let jl = if jumplen == 0 then 0 else jumplen + 2 in 
   let len = l - jl - si in
-  (
-    Printf.printf "\ntrimmed: %s\n" trimmed;
-    Printf.printf "\nprintf: %s\n" (String.sub trimmed si len);
-    String.sub trimmed si len 
-  )
+  String.sub trimmed si len 
