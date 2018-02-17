@@ -12,6 +12,7 @@ let command_type_test =
     "'0; JMP' is C Command" >:: assert_command "0; JMP" C_Command;
     "'(Loop)' is L Command" >:: assert_command "(Loop)" L_Command;
     "'(End)' is L Command" >:: assert_command "(End)" L_Command;
+    "// this is comment line" >:: assert_command "// this is comment line" Nothing;
   ]
 
 let symbol_test =
@@ -32,7 +33,7 @@ let dest_test =
   ]
 
 let comp_test =
-  let assert_comp str expected test_ctxt =
+  let assert_comp str expected kest_ctxt =
     assert_equal (Parser.comp str) expected in
   "comp" >::: [
     "0; JMP -> 0" >:: assert_comp "0; JMP" "0"; (* In this case, comp is not empty. *) 
