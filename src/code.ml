@@ -8,6 +8,7 @@ let dest mnemonic =
   | "D"   -> "010"
   | "M"   -> "001"
   | ""    -> "000"
+  | _     -> raise Not_found
 
 let comp mnemonic =
   match mnemonic with
@@ -39,3 +40,16 @@ let comp mnemonic =
   | "-1"  -> "0111010"
   | "1"   -> "0111111"
   | "0"   -> "0101010"
+  | _     -> raise Not_found
+
+let jump mnemonic =
+  match mnemonic with
+  | ""    -> "000" 
+  | "JGT" -> "001"
+  | "JEQ" -> "010"
+  | "JGE" -> "011"
+  | "JLT" -> "100"
+  | "JNE" -> "101"
+  | "JLE" -> "110"
+  | "JMP" -> "111"
+  | _     -> raise Not_found
