@@ -42,7 +42,35 @@ let comp_test =
     "D - 1; JLE -> D - 1" >:: assert_comp "D - 1; JLE" "D-1";
   ]
 
+let has_more_commands_test =
+  let assert_has_more_commands lines kest_ctxt =
+    assert_equal (Parser.has_more_commands lines) true in
+  let in_channel = open_in "sample.txt" in
+  let lines = Parser.line_stream_of_channel in_channel in
+  "has_more_commands" >::: [
+    "case1" >:: assert_has_more_commands lines 
+  ]
+
+let advance_test =
+  let assert_advance lines expected kest_ctxt =
+    assert_equal (Parser.advance lines) expected in
+  "advance" >::: [
+    "first line" >:: (fun _ -> 
+      let in_channel = open_in "sample.txt" in
+      let lines = Parser.line_stream_of_channel in_channel in
+      assert_equal (Parser.advance lines) "testtest");
+    "second line" >:: (fun _ ->
+      let in_channel = open_in "sample.txt" in
+      let lines = Parser.line_stream_of_channel in_channel in
+      assert_equal (Parser.advance lines; Parser.advance lines) "hoge");
+  ]
+
 let tests =
   "all_tests" >::: [
-    command_type_test; symbol_test; dest_test; comp_test;
+    command_type_test;
+    symbol_test;
+    dest_test;
+    comp_test;
+    has_more_commands_test;
+    advance_test;
   ]
