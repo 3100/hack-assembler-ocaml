@@ -21,8 +21,23 @@ let process_a_line_test =
     "'D=M' -> '1111110000010000'" >:: assert_func "D=M" "1111110000010000";
   ]
 
+let process_lines_test =
+  let assert_func lines expected test_ctxt =
+    assert_equal (Main.process_lines lines) expected in
+  let in_channel = open_in "sample.asm" in
+  let lines = Parser.line_stream_of_channel in_channel in
+  let expected = [
+    "0000000000001011";
+    "1110111111001000";
+    "1111110000010000";
+    ] in
+  "process_lines" >::: [
+    "case1" >:: assert_func lines expected;
+  ]
+
 let tests =
   "all_tests" >::: [
     get_15bit_string_test;
     process_a_line_test;
+    process_lines_test;
   ]

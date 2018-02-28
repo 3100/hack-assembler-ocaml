@@ -17,6 +17,12 @@ Library "main"
   BuildDepends:
     str
 
+Executable "run"
+  Path: src
+  MainIs: run.ml
+  CompiledObject: best
+  BuildDepends: main
+
 Executable "test_all"
   Path: test
   MainIs: test.ml

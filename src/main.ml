@@ -1,3 +1,5 @@
+open Printf
+
 let get_15bit_string strVal =
   let rec hoge value list =
     match value with
@@ -23,20 +25,22 @@ let process_a_line line =
         Code.jump (Parser.jump line;)] 
   | _ -> "" (* TODO L_Command *)
 
-(*
-let rec _process_lines_inner lines ret_list =
-  if Parser.has_more_commands lines then
-    let line = Parser.advance lines in
-    let binary_str = process_a_line line in
-    _process_lines_inner lines List.append(ret_list [binary_str;])
-  else
-    ret_list
-
 let process_lines lines =
+  let rec _process_lines_inner lines ret_list =
+    if Parser.has_more_commands lines then
+      let line = Parser.advance lines in
+      let binary_str = process_a_line line in
+      _process_lines_inner lines (List.append ret_list [binary_str])
+    else
+      ret_list
+  in
   _process_lines_inner lines []
 
-let run () =
-  let in_channel = open_in "example/add.asm" in
+let run in_path out_path =
+  printf "run";
+  let in_channel = open_in in_path in
   let lines = Parser.line_stream_of_channel in_channel in
-  process_lines lines 
-*)
+  let binary_lst = process_lines lines in
+  let out_channel = open_out out_path in
+  List.iter (fun line -> fprintf out_channel "%s\n" line);
+  close_out out_channel
