@@ -21,6 +21,7 @@ let symbol_test =
   "symbol" >::: [
     "@123 -> 123" >:: assert_symbol "@123" "123";
     "@0 -> 0" >:: assert_symbol "@0" "0";
+    "(123) -> 123" >:: assert_symbol "(123)" "123";
   ]
 
 let dest_test = 

@@ -41,10 +41,14 @@ let command_type line =
 let has_more_commands lines =
   try Stream.empty(lines) != () with Stream.Failure -> true
 
-(* Assume that this is only called when command_type is A_Command *)
+(* Assume that this is only called when command_type is A_Command or L_Command *)
 let symbol line = 
   let trimmed = _trim_line line in 
-  String.sub trimmed 1 (String.length(trimmed) - 1)
+  let first_chr = String.get trimmed 0 in
+  match first_chr with
+  | '@' -> String.sub trimmed 1 (String.length(trimmed) - 1)
+  (* HACK invalid input check *)
+  | '(' -> String.sub trimmed 1 (String.length(trimmed) - 2)
 
 (* Assume that this is only called when command_type is C_Command *)
 let dest line = 
