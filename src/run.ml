@@ -1,17 +1,14 @@
 open Sys
 
-(*
-let rootdir = Sys.getcwd () in
-let () = print_endline rootdir in
-let in_path = String.concat "/" [root; "example/add/Add.asm";] and 
-  out_path = String.concat "/" [root; "example/add/Add.hack";] in
-  Main.run in_path out_path
-*)
+let show_usage () =
+  print_endline "usage: ./run.native in_asm_path out_hack_path"
 
 let run () =
-  let root = Sys.getcwd() in
-  let in_path = String.concat "/" [root; "example/add/Add.asm"] and 
-    out_path = String.concat "/" [root; "example/add/Add.hack"] in
-    Main.run in_path out_path
+  match (Array.length Sys.argv) with
+  | 3 ->
+    let in_path = Sys.argv.(1) and
+      out_path = Sys.argv.(2) in
+      Main.run in_path out_path
+  | _ -> show_usage ()
 
-let _ = run ()
+let _ = run () 

@@ -54,9 +54,8 @@ let has_more_commands_test =
     "case1" >:: assert_has_more_commands lines 
   ]
 
+(* HACK warning messages when 'make' *)
 let advance_test =
-  let assert_advance lines expected kest_ctxt =
-    assert_equal (Parser.advance lines) expected in
   "advance" >::: [
     "first line" >:: (fun _ -> 
       let in_channel = open_in "sample.txt" in
