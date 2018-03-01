@@ -14,7 +14,7 @@ let _is_l_command = Str.regexp "^([a-zA-Z0-9]+)$"
 let _trim_line line = 
   let comment_pattern = Str.regexp "//.*$" in
   let no_comment_line = (Str.replace_first comment_pattern "" line) in
-  let pattern = Str.regexp " " in
+  let pattern = Str.regexp "[ \r\n\t]" in
   Str.global_replace pattern "" no_comment_line 
 
 let line_stream_of_channel channel = 

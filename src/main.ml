@@ -36,11 +36,15 @@ let process_lines lines =
   in
   _process_lines_inner lines []
 
+let write_line outChannel line =
+  match line with
+  | "" -> ()
+  | _  -> Printf.fprintf outChannel "%s\n" line
+
 let run in_path out_path =
-  printf "run";
   let in_channel = open_in in_path in
   let lines = Parser.line_stream_of_channel in_channel in
   let binary_lst = process_lines lines in
   let out_channel = open_out out_path in
-  List.iter (fun line -> fprintf out_channel "%s\n" line);
+  List.iter (write_line out_channel) binary_lst;
   close_out out_channel

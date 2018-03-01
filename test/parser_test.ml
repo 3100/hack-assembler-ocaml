@@ -13,6 +13,9 @@ let command_type_test =
     "'(Loop)' is L Command" >:: assert_command "(Loop)" L_Command;
     "'(End)' is L Command" >:: assert_command "(End)" L_Command;
     "// this is comment line" >:: assert_command "// this is comment line" Nothing;
+    "\\n" >:: assert_command "\n" Nothing;
+    "\\r" >:: assert_command "\r" Nothing;
+    "" >:: assert_command "" Nothing;
   ]
 
 let symbol_test =
