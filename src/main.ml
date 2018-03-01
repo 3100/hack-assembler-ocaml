@@ -18,11 +18,12 @@ let process_a_line line =
   let command = Parser.command_type line in
   match command with
   | A_Command -> String.concat "" ["0"; get_15bit_string (Parser.symbol line);] 
-  | C_Command -> String.concat ""
+  | C_Command -> 
+      String.concat ""
       [ "111";
         Code.comp (Parser.comp line);
         Code.dest (Parser.dest line);
-        Code.jump (Parser.jump line;)] 
+        Code.jump (Parser.jump line)] 
   | _ -> "" (* TODO L_Command *)
 
 let process_lines lines =

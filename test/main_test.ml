@@ -16,12 +16,13 @@ let process_a_line_test =
   let assert_func str expected test_ctxt =
     assert_equal (Main.process_a_line str) expected in
   "process_a_line" >::: [
-    "'@11' -> '0000000000001011'" >:: assert_func "@11" "0000000000001011";
-    "'M=1' -> '1110111111001000'" >:: assert_func "M=1" "1110111111001000";
-    "'D=M' -> '1111110000010000'" >:: assert_func "D=M" "1111110000010000";
-    "'// hoge' -> ''" >:: assert_func "// hoge" "";
-    "'' -> ''" >:: assert_func "" "";
-    "'\n' -> ''" >:: assert_func "\n" "";
+    "'@11'    -> '0000000000001011'" >:: assert_func "@11"     "0000000000001011";
+    "'M=1'    -> '1110111111001000'" >:: assert_func "M=1"     "1110111111001000";
+    "'D=M'    -> '1111110000010000'" >:: assert_func "D=M"     "1111110000010000";
+    "'D;JGT'  -> '1110001100000001'" >:: assert_func "D;JGT"   "1110001100000001";
+    "'//hoge' -> ''"                 >:: assert_func "//hoge"  "";
+    "''       -> ''"                 >:: assert_func ""        "";
+    "'\\n'    -> ''"                 >:: assert_func "\n"      "";
   ]
 
 let process_lines_test =

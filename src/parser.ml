@@ -63,7 +63,7 @@ let jump line =
   let trimmed = _trim_line line in 
   if String.contains trimmed ';' then
     let si = (String.index trimmed ';') + 1 in 
-    let len = (String.length trimmed) - 1 - si in
+    let len = (String.length trimmed) - si in
     String.sub trimmed si len 
   else ""
 
@@ -77,6 +77,6 @@ let comp line =
   let l = String.length trimmed and 
   jumplen = String.length (jump line) in
   (* think of ';' *)
-  let jl = if jumplen == 0 then 0 else jumplen + 2 in 
+  let jl = if jumplen == 0 then 0 else jumplen + 1 in 
   let len = l - jl - si in
   String.sub trimmed si len 
