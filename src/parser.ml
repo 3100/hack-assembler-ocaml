@@ -14,7 +14,7 @@ let _is_l_command = Str.regexp "^([a-zA-Z0-9]+)$"
 let _trim_line line = 
   let comment_pattern = Str.regexp "//.*$" in
   let no_comment_line = (Str.replace_first comment_pattern "" line) in
-  let pattern = Str.regexp " " in
+  let pattern = Str.regexp "[ \r\n\t]" in
   Str.global_replace pattern "" no_comment_line 
 
 let line_stream_of_channel channel = 
@@ -41,10 +41,14 @@ let command_type line =
 let has_more_commands lines =
   try Stream.empty(lines) != () with Stream.Failure -> true
 
-(* Assume that this is only called when command_type is A_Command *)
+(* Assume that this is only called when command_type is A_Command or L_Command *)
 let symbol line = 
   let trimmed = _trim_line line in 
-  String.sub trimmed 1 (String.length(trimmed) - 1)
+  let first_chr = String.get trimmed 0 in
+  match first_chr with
+  | '@' -> String.sub trimmed 1 (String.length(trimmed) - 1)
+  (* HACK invalid input check *)
+  | '(' -> String.sub trimmed 1 (String.length(trimmed) - 2)
 
 (* Assume that this is only called when command_type is C_Command *)
 let dest line = 
@@ -59,7 +63,7 @@ let jump line =
   let trimmed = _trim_line line in 
   if String.contains trimmed ';' then
     let si = (String.index trimmed ';') + 1 in 
-    let len = (String.length trimmed) - 1 - si in
+    let len = (String.length trimmed) - si in
     String.sub trimmed si len 
   else ""
 
@@ -73,6 +77,6 @@ let comp line =
   let l = String.length trimmed and 
   jumplen = String.length (jump line) in
   (* think of ';' *)
-  let jl = if jumplen == 0 then 0 else jumplen + 2 in 
+  let jl = if jumplen == 0 then 0 else jumplen + 1 in 
   let len = l - jl - si in
   String.sub trimmed si len 
