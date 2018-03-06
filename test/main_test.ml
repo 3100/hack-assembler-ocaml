@@ -13,8 +13,12 @@ let get_15bit_string_test =
   ]
 
 let process_a_line_test =
+  let symbol_table = Symboltable.init and
+    line_index = 0 in 
   let assert_func str expected test_ctxt =
-    assert_equal (Main.process_a_line str) expected in
+    let (actual, _) = Main.process_a_line str line_index symbol_table in
+    assert_equal actual expected
+  in
   "process_a_line" >::: [
     "'@11'    -> '0000000000001011'" >:: assert_func "@11"     "0000000000001011";
     "'M=1'    -> '1110111111001000'" >:: assert_func "M=1"     "1110111111001000";
@@ -23,11 +27,20 @@ let process_a_line_test =
     "'//hoge' -> ''"                 >:: assert_func "//hoge"  "";
     "''       -> ''"                 >:: assert_func ""        "";
     "'\\n'    -> ''"                 >:: assert_func "\n"      "";
+    "'(END)'  -> ''"                 >:: assert_func "(END)"   ""; (* In the case, symbol_table get one entry. *)
   ]
 
-let process_lines_test =
+let process_lines_first_test =
+  (* TODO implement *)
+  "process_lines_first" >:: (fun _ -> assert_equal true false)
+
+(* HACK test with symbol *)
+let process_lines_second_test =
+  let symbol_table = Symboltable.init in 
   let assert_func lines expected test_ctxt =
-    assert_equal (Main.process_lines lines) expected in
+    let actual = Main.process_lines_second lines symbol_table in 
+    assert_equal actual expected
+  in
   let in_channel = open_in "sample.asm" in
   let lines = Parser.line_stream_of_channel in_channel in
   let expected = [
@@ -35,7 +48,7 @@ let process_lines_test =
     "1110111111001000";
     "1111110000010000";
     ] in
-  "process_lines" >::: [
+  "process_lines_second" >::: [
     "case1" >:: assert_func lines expected;
   ]
 
@@ -43,5 +56,6 @@ let tests =
   "all_tests" >::: [
     get_15bit_string_test;
     process_a_line_test;
-    process_lines_test;
+    process_lines_first_test;
+    process_lines_second_test;
   ]
