@@ -4,6 +4,7 @@ let all_tests = "all_test" >::: [
   Parser_test.tests;
   Code_test.tests;
   Main_test.tests;
+  Symboltable_test.tests;
 ];;
 
 let () =
