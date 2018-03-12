@@ -66,6 +66,6 @@ let jump_test =
   ]
 
 let tests =
-  "all_tests" >::: [
+  "code_tests" >::: [
     dest_test; comp_test; jump_test;
   ]

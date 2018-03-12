@@ -6,6 +6,7 @@ let command_type_test =
   "command type" >::: [
     "' @1' is A command"        >:: assert_command " @1" A_Command;
     "'@123' is A command"       >:: assert_command "@123" A_Command;
+    "   @R0 is A command"       >:: assert_command "   @R0" A_Command;
     "' M = D + 1' is C command" >:: assert_command " M = D + 1" C_Command;
     "'D + 1; JGT' is C Command" >:: assert_command "D + 1; JGT" C_Command;
     "'0;JMP' is C Command"      >:: assert_command "0;JMP" C_Command;
@@ -13,6 +14,8 @@ let command_type_test =
     "'0; JMP' is C Command"     >:: assert_command "0; JMP" C_Command;
     "'(Loop)' is L Command"     >:: assert_command "(Loop)" L_Command;
     "'(End)' is L Command"      >:: assert_command "(End)" L_Command;
+    "'(OUT_1) ' is L Command"   >:: assert_command "(OUT_1) " L_Command;
+    "'(sys.init)' is L Command" >:: assert_command "(sys.init)" L_Command;
     "// this is comment line"   >:: assert_command "// this is comment line" Nothing;
     "\\n"                       >:: assert_command "\n" Nothing;
     "\\r"                       >:: assert_command "\r" Nothing;
@@ -26,6 +29,8 @@ let symbol_test =
     "@123 -> 123" >:: assert_symbol "@123" "123";
     "@0 -> 0" >:: assert_symbol "@0" "0";
     "(123) -> 123" >:: assert_symbol "(123)" "123";
+    "@HOGE -> HOGE" >:: assert_symbol "@HOGE" "HOGE";
+    "(END) -> END" >:: assert_symbol "(END)" "END";
   ]
 
 let dest_test = 
@@ -81,7 +86,7 @@ let advance_test =
   ]
 
 let tests =
-  "all_tests" >::: [
+  "parser_tests" >::: [
     command_type_test;
     symbol_test;
     dest_test;

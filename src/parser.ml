@@ -8,7 +8,7 @@ type command =
 (* let is_c_command = Str.regexp "^\\([AMD]+=\\)?[\\+AMD01!|&-]+\\(;J[\\(GT|EQ|GE|LT|NE|LE|MP\\)]\\)?" *)
 (* HACK: not complete pattern. *)
 let _is_c_command = Str.regexp "^\\([AMD]+=\\)?\\([^()]+\\)\\(;J.+\\)?$"
-let _is_l_command = Str.regexp "^([a-zA-Z0-9]+)$" 
+let _is_l_command = Str.regexp "^([a-zA-Z0-9_\\.\\$]+)$" 
 
 (* replace all " " with "" *)
 let _trim_line line = 
@@ -41,7 +41,8 @@ let command_type line =
 let has_more_commands lines =
   try Stream.empty(lines) != () with Stream.Failure -> true
 
-(* Assume that this is only called when command_type is A_Command or L_Command *)
+(* Getting a symbol as its label or a decimal string.
+ * Assume that this is only called when command_type is A_Command or L_Command *)
 let symbol line = 
   let trimmed = _trim_line line in 
   let first_chr = String.get trimmed 0 in
