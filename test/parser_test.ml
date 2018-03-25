@@ -41,7 +41,8 @@ let advance_test =
     "second line" >:: (fun _ ->
       let in_channel = open_in "sample.txt" in
       let lines = Parser.line_stream_of_channel in_channel in
-      assert_equal (Parser.advance lines; Parser.advance lines) "hoge");
+      let _ = Parser.advance lines in
+      assert_equal (Parser.advance lines) "hoge");
   ]
 
 let tests =
