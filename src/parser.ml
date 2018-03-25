@@ -62,7 +62,6 @@ let parse line =
           String.sub matched 1 (String.length(matched) - 1)
         with _ -> "" 
       in 
-      (*let () = Printf.printf "%s:%s:%s\n" dest comp jmp in *)
       C_Command (dest, comp, jmp) 
     | _ -> Nothing (* HACK: It's better to distinguish Parse_Error case from Nothing case. *)
 
