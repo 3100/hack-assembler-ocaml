@@ -53,13 +53,12 @@ let prepare_symbol_table () =
 
 (* Collecting a symbol from the line.
  * Assume the command of the line is L_Command or A_Command.
- * @param line string 
+ * @param symbol string 
  * @param lineIndex used as the address of the line
  * @param symbolTable
  * @return an updated symbolTable 
  *)
-let process_a_line_first line lineIndex symbolTable =
-  let symbol = Parser.symbol line in 
+let process_a_line_first symbol lineIndex symbolTable =
   match int_of_string_opt(symbol) with
   | None -> Symboltable.add_entry symbol lineIndex symbolTable (* symbol is a label *)
   | _ -> symbolTable (* Do nothing when symbol is decimal string *)
@@ -67,29 +66,28 @@ let process_a_line_first line lineIndex symbolTable =
 (*
  * @return (table, binary, nextAddressInt)
  *)
-let process_a_line_second_command_a line addressCandidate symbolTable =
+let process_a_line_second_command_a address addressCandidate symbolTable =
   let _gen_binary addressStr =
     String.concat "" ["0"; get_15bit_string addressStr;]  in
-  let symbol = Parser.symbol line in
-  match Symboltable.contains symbol symbolTable with
-  | false when int_of_string_opt(symbol) == None ->
-    let table = Symboltable.add_entry symbol addressCandidate symbolTable in
+  match address with
+  | Parser.Digit d ->
+    let binary = _gen_binary(string_of_int d) in
+    (symbolTable, binary, addressCandidate) 
+  | Symbol sym when Symboltable.contains sym symbolTable ->
+    let addr = string_of_int (Symboltable.get_address sym symbolTable) in
+    let binary = _gen_binary addr in
+    (symbolTable, binary, addressCandidate) 
+  | Symbol sym ->
+    let table = Symboltable.add_entry sym addressCandidate symbolTable in
     let binary = _gen_binary (string_of_int addressCandidate) in
     (table, binary, addressCandidate + 1)
-  | _ -> 
-    let address =
-    (match int_of_string_opt symbol with
-    | Some _ -> symbol 
-    | None -> string_of_int (Symboltable.get_address symbol symbolTable)) in
-    let binary = _gen_binary address in
-    (symbolTable, binary, addressCandidate)
 
-let process_a_line_second_command_c line =
+let process_a_line_second_command_c dest comp jump =
   String.concat ""
     [ "111";
-      Code.comp (Parser.comp line);
-      Code.dest (Parser.dest line);
-      Code.jump (Parser.jump line);]
+      Code.comp comp;
+      Code.dest dest;
+      Code.jump jump;]
 
 (* update symbolTable with L_Command *)
 let process_lines_first lines symbolTable =
@@ -99,8 +97,8 @@ let process_lines_first lines symbolTable =
       (* command is needed to confirm whether lineIndex + 1 is needed *)
       let command = Parser.parse line in
       match command with
-      | L_Command _ ->
-        let new_symbol_table = process_a_line_first line lineIndex st in
+      | L_Command symbol ->
+        let new_symbol_table = process_a_line_first symbol lineIndex st in
         _process_lines_inner lines lineIndex new_symbol_table
       | A_Command _ | C_Command _ ->
         _process_lines_inner lines (lineIndex + 1) st 
@@ -118,11 +116,11 @@ let process_lines_second lines symbolTable =
       let line = Parser.advance lines in
       let command = Parser.parse line in
       match command with
-      | A_Command _ ->
-        let (updated_st, binary_str, next_address) = process_a_line_second_command_a line addressCandidate st in 
+      | A_Command addr ->
+        let (updated_st, binary_str, next_address) = process_a_line_second_command_a addr addressCandidate st in 
         _process_lines_inner lines next_address (List.append ret_list [binary_str]) updated_st 
-      | C_Command _ ->
-        let binary_str = process_a_line_second_command_c line in
+      | C_Command (dest, comp, jump) ->
+        let binary_str = process_a_line_second_command_c dest comp jump in
         _process_lines_inner lines addressCandidate (List.append ret_list [binary_str]) st 
       | _ ->
         _process_lines_inner lines addressCandidate ret_list st 

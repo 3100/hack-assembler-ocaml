@@ -7,7 +7,7 @@ type address =
   | Digit of int
   | Symbol of symbol;;
 type command =
-  A_Command of address 
+  | A_Command of address 
   | C_Command of dest * comp * jmp 
   | L_Command of symbol
   | Nothing;;
@@ -41,7 +41,10 @@ let parse line =
     match first_chr with
     | '@' ->
       let symbol = (String.sub trimmed 1 (String.length(trimmed) - 1)) in
-      A_Command (Symbol symbol)
+      (try
+        let digit = int_of_string symbol in
+        A_Command (Digit digit)
+      with _ -> A_Command (Symbol symbol))
     | '(' when Str.string_match _is_l_command trimmed 0 -> L_Command (Str.matched_group 1 trimmed)
     | '(' -> raise Parse_Error
     | _ when Str.string_match _is_c_command trimmed 0 -> 

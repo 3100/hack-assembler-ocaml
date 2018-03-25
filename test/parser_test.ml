@@ -4,8 +4,8 @@ let parse_test =
   let assert_command str expected test_ctxt =
     assert_equal (Parser.parse str) expected in
   "command type" >::: [
-    "' @1' is A command"        >:: assert_command " @1"        (A_Command (Symbol "1"));
-    "'@123' is A command"       >:: assert_command "@123"       (A_Command (Symbol "123"));
+    "' @1' is A command"        >:: assert_command " @1"        (A_Command (Digit 1));
+    "'@123' is A command"       >:: assert_command "@123"       (A_Command (Digit 123));
     "   @R0 is A command"       >:: assert_command "   @R0"     (A_Command (Symbol "R0"));
     "' M = D + 1' is C command" >:: assert_command " M = D + 1" (C_Command ("M", "D+1", ""));
     "'D + 1; JGT' is C Command" >:: assert_command "D + 1; JGT" (C_Command ("", "D+1", "JGT"));
