@@ -97,12 +97,12 @@ let process_lines_first lines symbolTable =
     if Parser.has_more_commands lines then
       let line = Parser.advance lines in
       (* command is needed to confirm whether lineIndex + 1 is needed *)
-      let command = Parser.command_type line in
+      let command = Parser.parse line in
       match command with
-      | L_Command ->
+      | L_Command _ ->
         let new_symbol_table = process_a_line_first line lineIndex st in
         _process_lines_inner lines lineIndex new_symbol_table
-      | A_Command | C_Command ->
+      | A_Command _ | C_Command _ ->
         _process_lines_inner lines (lineIndex + 1) st 
       | _ ->
         _process_lines_inner lines lineIndex st 
@@ -116,12 +116,12 @@ let process_lines_second lines symbolTable =
   let rec _process_lines_inner lines addressCandidate ret_list st =
     if Parser.has_more_commands lines then
       let line = Parser.advance lines in
-      let command = Parser.command_type line in
+      let command = Parser.parse line in
       match command with
-      | A_Command ->
+      | A_Command _ ->
         let (updated_st, binary_str, next_address) = process_a_line_second_command_a line addressCandidate st in 
         _process_lines_inner lines next_address (List.append ret_list [binary_str]) updated_st 
-      | C_Command ->
+      | C_Command _ ->
         let binary_str = process_a_line_second_command_c line in
         _process_lines_inner lines addressCandidate (List.append ret_list [binary_str]) st 
       | _ ->

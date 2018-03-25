@@ -1,14 +1,22 @@
+(* WIP *)
+type dest = string;;
+type comp = string;;
+type jmp = string;;
+type symbol = string;;
+type address =
+  | Digit of int
+  | Symbol of symbol;;
 type command =
-  | A_Command
-  | C_Command
-  | L_Command
+  A_Command of address 
+  | C_Command of dest * comp * jmp 
+  | L_Command of symbol
   | Nothing;;
 
-  (* HACK: too dificult for my future self to understand. Also this does not work. *)
-(* let is_c_command = Str.regexp "^\\([AMD]+=\\)?[\\+AMD01!|&-]+\\(;J[\\(GT|EQ|GE|LT|NE|LE|MP\\)]\\)?" *)
+exception Parse_Error
+
 (* HACK: not complete pattern. *)
-let _is_c_command = Str.regexp "^\\([AMD]+=\\)?\\([^()]+\\)\\(;J.+\\)?$"
-let _is_l_command = Str.regexp "^([a-zA-Z0-9_\\.\\$]+)$" 
+let _is_c_command = Str.regexp "^\\([AMD]+=\\)?\\([^();]+\\)\\(;J.+\\)?$"
+let _is_l_command = Str.regexp "^(\\([a-zA-Z0-9_\\.\\$]+\\))$" 
 
 (* replace all " " with "" *)
 let _trim_line line = 
@@ -21,22 +29,39 @@ let line_stream_of_channel channel =
   Stream.from
     (fun _ ->
       try Some (input_line channel) with End_of_file -> None);;
-(*
-let in_channel = open_in "example/add.asm";
-let lines = Parser.line_stream_of_channel in_channel;
-Stream.next lines;
-*)
 
 let advance lines =
   Stream.next lines
 
-let command_type line =
+let parse line =
   let trimmed = _trim_line line in 
   if String.length trimmed == 0 then Nothing
-  else if String.get trimmed 0 == '@' then A_Command
-  else if Str.string_match _is_c_command trimmed 0 then C_Command
-  else if Str.string_match _is_l_command trimmed 0 then L_Command
-  else Nothing
+  else
+    let first_chr = String.get trimmed 0 in
+    match first_chr with
+    | '@' ->
+      let symbol = (String.sub trimmed 1 (String.length(trimmed) - 1)) in
+      A_Command (Symbol symbol)
+    | '(' when Str.string_match _is_l_command trimmed 0 -> L_Command (Str.matched_group 1 trimmed)
+    | '(' -> raise Parse_Error
+    | _ when Str.string_match _is_c_command trimmed 0 -> 
+      let dest =
+        try
+          (* ex. "D=" *)
+          let matched = Str.matched_group 1 trimmed in
+          String.sub matched 0 (String.length(matched) - 1)
+        with _ -> "" and
+      comp = try Str.matched_group 2 trimmed with _ -> "" and
+      jmp = 
+        try
+          (* ex. ";JMP" *)
+          let matched = Str.matched_group 3 trimmed in
+          String.sub matched 1 (String.length(matched) - 1)
+        with _ -> "" 
+      in 
+      (*let () = Printf.printf "%s:%s:%s\n" dest comp jmp in *)
+      C_Command (dest, comp, jmp) 
+    | _ -> Nothing (* HACK: It's better to distinguish Parse_Error case from Nothing case. *)
 
 let has_more_commands lines =
   try Stream.empty(lines) != () with Stream.Failure -> true

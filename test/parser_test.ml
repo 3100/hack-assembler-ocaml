@@ -1,25 +1,25 @@
 open OUnit2
 
-let command_type_test =
+let parse_test =
   let assert_command str expected test_ctxt =
-    assert_equal (Parser.command_type str) expected in
+    assert_equal (Parser.parse str) expected in
   "command type" >::: [
-    "' @1' is A command"        >:: assert_command " @1" A_Command;
-    "'@123' is A command"       >:: assert_command "@123" A_Command;
-    "   @R0 is A command"       >:: assert_command "   @R0" A_Command;
-    "' M = D + 1' is C command" >:: assert_command " M = D + 1" C_Command;
-    "'D + 1; JGT' is C Command" >:: assert_command "D + 1; JGT" C_Command;
-    "'0;JMP' is C Command"      >:: assert_command "0;JMP" C_Command;
-    "'D;JGT' is C Command"      >:: assert_command "D;JGT" C_Command;
-    "'0; JMP' is C Command"     >:: assert_command "0; JMP" C_Command;
-    "'(Loop)' is L Command"     >:: assert_command "(Loop)" L_Command;
-    "'(End)' is L Command"      >:: assert_command "(End)" L_Command;
-    "'(OUT_1) ' is L Command"   >:: assert_command "(OUT_1) " L_Command;
-    "'(sys.init)' is L Command" >:: assert_command "(sys.init)" L_Command;
+    "' @1' is A command"        >:: assert_command " @1"        (A_Command (Symbol "1"));
+    "'@123' is A command"       >:: assert_command "@123"       (A_Command (Symbol "123"));
+    "   @R0 is A command"       >:: assert_command "   @R0"     (A_Command (Symbol "R0"));
+    "' M = D + 1' is C command" >:: assert_command " M = D + 1" (C_Command ("M", "D+1", ""));
+    "'D + 1; JGT' is C Command" >:: assert_command "D + 1; JGT" (C_Command ("", "D+1", "JGT"));
+    "'0;JMP' is C Command"      >:: assert_command "0;JMP"      (C_Command ("", "0", "JMP"));
+    "'D;JGT' is C Command"      >:: assert_command "D;JGT"      (C_Command ("", "D", "JGT"));
+    "'0; JMP' is C Command"     >:: assert_command "0; JMP"     (C_Command ("", "0", "JMP"));
+    "'(Loop)' is L Command"     >:: assert_command "(Loop)"     (L_Command "Loop");
+    "'(End)' is L Command"      >:: assert_command "(End)"      (L_Command "End");
+    "'(OUT_1) ' is L Command"   >:: assert_command "(OUT_1) "   (L_Command "OUT_1");
+    "'(sys.init)' is L Command" >:: assert_command "(sys.init)" (L_Command "sys.init");
     "// this is comment line"   >:: assert_command "// this is comment line" Nothing;
     "\\n"                       >:: assert_command "\n" Nothing;
     "\\r"                       >:: assert_command "\r" Nothing;
-    ""                          >:: assert_command "" Nothing;
+    ""                          >:: assert_command ""   Nothing;
   ]
 
 let symbol_test =
@@ -87,7 +87,7 @@ let advance_test =
 
 let tests =
   "parser_tests" >::: [
-    command_type_test;
+    parse_test;
     symbol_test;
     dest_test;
     comp_test;
